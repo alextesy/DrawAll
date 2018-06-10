@@ -3,104 +3,112 @@
 
     var canvas = document.getElementById("imgCanvas");
     var context = canvas.getContext("2d");
-    canvas.addEventListener('click',draw,false )
+    canvas.addEventListener('click',createElement,false )
     serverAddress='http:/localhost:3000/';
-    var element='Triangle';
+    var shape='Triangle';
     var color='black';
     var size=50;
     var ip='0.0.0.0';
-    var x;
-    var y;
-    function saveColor(){
-        color=document.getElementById('colorP').value
-    }
+    var currentElement;
+    //var x;
+    //var y;
+    
     
     function saveElement(elm){
-        element=elm;
+        shape=elm;
     
     }
     function canvasReady(){
         canvas.onmousedown = draw;
- {x:evt.clientX - rect.left,
-            y:evt.clientY - rect.top }
+        redraw()
+ 
     }
   
     function redraw(){
         $.getJSON(serverAddress, function(result){
             $.each(result, function(i, field){
-                $("div").append(field + " ");
+                draw(field)
             });
         });
     }
-    function getCoordinates(e){
+    function createElement(e){
+
         var rect = canvas.getBoundingClientRect();
-        x=e.clientX - rect.left;
-        y=e.clientY - rect.top;
+        var color=document.getElementById('colorP').value;
+        var currElement={
+            ip:ip,
+            shape:shape,
+            size:size,
+            color:color,
+            x:e.clientX - rect.left,
+            y:e.clientY - rect.top,
+        }
+        saveElementDB(canvas,currElement)
+        draw(currElement)
+
     }
-    function draw(e){
-        if(element=='Circle'){
-            drawCirle(e);
+    function draw(element){
+        if(element.shape=='Circle'){
+            drawCirle(element);
         }
-        else if(element=='Triangle'){
-            drawTriangle(e);
+        else if(element.shape=='Triangle'){
+            drawTriangle(element);
         }
-        else if(element=='Rectangle'){
-            drawRectangle(e);
+        else if(element.shape=='Rectangle'){
+            drawRectangle(element);
         }
 
     }
-    function drawRectangle(e){
-        var pos = getMousePos(canvas, e);
-        posx = pos.x;
-        posy = pos.y;
-        context.fillStyle = color;
+    function drawRectangle(element){
+        //var pos = getMousePos(canvas, e);
+        posx = element.x;
+        posy = element.y;
+        context.fillStyle = element.color;
         context.beginPath();
-        context.rect(posx-size,posy-size,size*2,size*2); 
+        context.rect(posx-(size/2),posy-(element.size/2),element.size,element.size); 
         context.fill();
         
     }
-    function drawCirle(e) {
-        var pos = getMousePos(canvas, e);
-        posx = pos.x;
-        posy = pos.y;
-        context.fillStyle = color;
+    function drawCirle(element) {
+        //var pos = getMousePos(canvas, e);
+        posx =element.x;
+        posy = element.y;
+        context.fillStyle = element.color;
         context.beginPath();
-        context.arc(posx, posy, size, 0, 2*Math.PI);
+        context.arc(posx, posy, element.size/2, 0, 2*Math.PI);
         context.fill();
     }
     
 
-    function drawTriangle(e){
-        var pos = getMousePos(canvas, e);
-        posx = pos.x;
-        posy = pos.y;
-        context.fillStyle = color;
+    function drawTriangle(element){
+        //var pos = getMousePos(canvas, e);
+        posx = element.x;
+        posy = element.y;
         context.beginPath();
-        context.moveTo(posx-size, posy-size);
-        context.lineTo(posx-size, posy+size);
-        context.lineTo(posx+size, posy+size);
+        context.moveTo(posx, posy);
+        context.lineTo(posx, posy+element.size);
+        context.lineTo(posx+element.size, posy+element.size);
+        context.fillStyle = element.color;
         context.closePath();
         context.fill();
     }
 
-    function getMousePos(canvas,evt) {
+    function saveElementDB(canvas,element) {
         var rect = canvas.getBoundingClientRect();
-        color=document.getElementById('colorP').value
         $.ajax({
             method: "POST",
             url: serverAddress+"element",
             data:{
-                'ip':ip,
-                'element':element,
-                'color':color,
-                'size':size,
-                'x': evt.clientX - rect.left,
-                'y': evt.clientY - rect.top
+                'ip':element.ip,
+                'shape':element.shape,
+                'color':element.color,
+                'size':element.size,
+                'x': element.x,
+                'y': element.y
             },
           
           })
-          return {x:evt.clientX - rect.left,
-            y:evt.clientY - rect.top }
+          
     }
 
 

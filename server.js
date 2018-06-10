@@ -24,7 +24,7 @@ app.post('/element',function(req,res){
     element=Object.values(req.body)
    // var query=util.format("SELECT username,password FROM users WHERE username='%s';",req.body.username);
     let placeholders = element.map((language) => "'%s'").join(',');
-    let sql = 'INSERT INTO main(ip,element,color,size,x,y) VALUES (' + placeholders +')';
+    let sql = 'INSERT INTO main(ip,shape,color,size,x,y) VALUES (' + placeholders +')';
     var query=util.format(sql,element[0],element[1],element[2],element[3],element[4],element[5]);
     DButilsAzure.execQuery(query)
     .then(function(result){
@@ -38,7 +38,18 @@ app.post('/element',function(req,res){
    })
 
 app.get('/',function(req,res){
-    
+    var query = 'SELECT * from main ORDER BY id ASC;';
+    DButilsAzure.execQuery(query)
+    .then(function(result){
+        res.send(result)
+    })
+    .catch(function(err){
+        console.log("error")
+        res.status(500).send("Error While retrieving the Board")
+
+    })
+
+
 })
    /*db.get(query,[], (err,rows) => {
        if (err) {
