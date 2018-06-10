@@ -1,6 +1,4 @@
-
-
-
+    //Initiating Variables
     var canvas = document.getElementById("imgCanvas");
     var context = canvas.getContext("2d");
     canvas.addEventListener('click',createElement,false )
@@ -8,22 +6,28 @@
     var shape='Triangle';
     var color='black';
     var size=50;
-    var ip='0.0.0.0';
+    //var ip='0.0.0.0';
     var currentElement;
     //var x;
     //var y;
     
-    
+    //Updating Variables Function
     function saveElement(elm){
         shape=elm;
-    
     }
     function canvasReady(){
         canvas.onmousedown = draw;
+        getIP()
         redraw()
  
     }
+    function getIP(){
+        $.getJSON('https://ipinfo.io', function(data){
+            ip=data.ip;
+        });
+    }
   
+    //Redraw elements from DB 
     function redraw(){
         $.getJSON(serverAddress, function(result){
             $.each(result, function(i, field){
@@ -32,10 +36,12 @@
             });
         });
     }
-    function createElement(e){
 
+    //Create an Element on a mouse click
+    function createElement(e){
         var rect = canvas.getBoundingClientRect();
         var color=document.getElementById('colorP').value;
+        var size=parseInt(document.getElementById('myRange').value);
         var currElement={
             ip:ip,
             shape:shape,
@@ -48,6 +54,8 @@
         draw(currElement)
 
     }
+
+    //Controller for drawing function. Draws the relevent shape.
     function draw(element){
         if(element.shape=='Circle'){
             drawCirle(element);
@@ -60,15 +68,17 @@
         }
 
     }
+
+
+    //Shape draw functions
     function drawRectangle(element){
         //var pos = getMousePos(canvas, e);
         posx = element.x;
         posy = element.y;
         context.fillStyle = element.color;
         context.beginPath();
-        context.rect(posx-(size/2),posy-(element.size/2),element.size,element.size); 
+        context.rect(posx-(element.size/2),posy-(element.size/2),element.size,element.size); 
         context.fill();
-        
     }
     function drawCirle(element) {
         //var pos = getMousePos(canvas, e);
@@ -79,8 +89,6 @@
         context.arc(posx, posy, element.size/2, 0, 2*Math.PI);
         context.fill();
     }
-    
-
     function drawTriangle(element){
         //var pos = getMousePos(canvas, e);
         posx = element.x;
@@ -94,6 +102,8 @@
         context.fill();
     }
 
+
+    //Save Element to DB
     function saveElementDB(canvas,element) {
         var rect = canvas.getBoundingClientRect();
         $.ajax({
@@ -109,7 +119,6 @@
             },
           
           })
-          
     }
 
 
