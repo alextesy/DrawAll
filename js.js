@@ -27,6 +27,7 @@
     function redraw(){
         $.getJSON(serverAddress, function(result){
             $.each(result, function(i, field){
+                field.size=parseInt(field.size);
                 draw(field)
             });
         });
