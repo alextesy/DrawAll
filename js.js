@@ -2,7 +2,7 @@
     var canvas = document.getElementById("imgCanvas");
     var context = canvas.getContext("2d");
     canvas.addEventListener('click',createElement,false )
-    serverAddress='http:/localhost:3000/';
+    serverAddress='https://drawall.azurewebsites.net/';
     var shape='Triangle';
     var color='black';
     var size=50;
