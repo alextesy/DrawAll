@@ -5,7 +5,7 @@ var app = express();
 var cors = require('cors');
 app.use(cors());
 var DButilsAzure = require('./DButils');
-var jwt  = require('jsonwebtoken');
+//var jwt  = require('jsonwebtoken');
 //var db = new sqlite3.Database('draw.db');
 var util=require('util');
 
